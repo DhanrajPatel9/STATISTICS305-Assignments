@@ -1,0 +1,33 @@
+---
+title: "Assignment 3 Question 2"
+author: "Dhanraj Patel - 1003965168"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+# question 4
+
+
+
+```{r}
+library(tidyverse)
+
+prob2 <- read_csv( file = "Problem2.csv")
+anova(lm(Response ~ FactorB*FactorA, data=prob2))
+```
+
+
+since the p value was 0.757035 which is > than 0.05 we can conclude that there is no signifanct interaction in the model. 
+
+\newpage
+
+# question 6
+
+```{r}
+anova(lm(Response ~ FactorB+FactorA, data=prob2))
+```
+
+
+According to the R output, both FactorA and FactorB are significant with p values lower than 0.05.In both cases we would reject the null hyothesis. 

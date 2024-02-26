@@ -1,0 +1,76 @@
+---
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+
+
+```
+
+## 3a)
+
+The response quantitative variable is the number of bacteria present on the second recipient gloved hand.
+
+the predictor variable includes a single factor that is the methode of greeting with the levels/treatment being a high five and handshake. This is a categorical variable. 
+
+
+## 3b)
+
+
+```{r}
+
+#data
+Handshake <- c(115, 87, 109, 96, 92, 90, 102, 110, 89, 100)
+HighFive <- c(48, 70, 69, 60, 53, 56, 80, 74, 48, 55)
+
+ 
+treatments<- c("Handshake", "HighFive")
+boxplot(Handshake, HighFive, names=treatments,  main = "Bacteria count boxplot", 
+xlab="Method of greeting", ylab="Bacteria count")
+
+```
+
+
+It is believed that more bacteria were transferred during a handshake compared with a high five.
+This is supported by the box plots as we can see, the entire boxplot of handshake is above the entire box plot for the high five.
+This means that the min, q1, median, q3 and max values of the number of bacteria in handshakes are all higher than the max value for a high five.
+So we can conclude that the boxplots do support the original theory. 
+
+
+## 3c)
+
+
+```{r}
+
+
+print("Handshake")
+qqnorm(Handshake)
+qqline(Handshake)
+print("HighFive")
+qqnorm(HighFive)
+qqline(HighFive)
+
+a<-var.test(Handshake,HighFive)
+a
+
+
+b<-t.test(Handshake,HighFive,var.equal=TRUE)
+b
+
+
+```
+
+assumptions
+
+normality: Using the qq plots for handshakes and high fives we see that both are sets of data follow the assumptions of normality. 
+
+variance: Using var.test the value came out to 0.6955 which is a lot higher than 0.05. From this value we can tell the variances are roughly equal and the assumption is followed.
+
+Both normality and variance assumption were followed. 
+
+using t.test welsh approximation the p value was 2.534e-07 (much lower than 0.05) which means we can reject the null hypothesis and this information in conjunction with the boxplot lets us conclude that more bacteria were transferred during a handshake compared with a high five.

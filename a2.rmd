@@ -1,0 +1,258 @@
+---
+title: "Assignment 2 Question 1"
+author: "Dhanraj Patel - 1003965168"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+# Question 1 
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+#install.packages("multcomp")
+require(multcomp)
+library(multcomp)
+library(tidyverse)
+
+
+```
+
+# 1
+
+Experiment unit - Each one of the 40 participants in the study. They will be taking 1 of 4 pain medications and reporting their pain levels after 30 minutes after a migraine.
+
+Variables
+
+Response - In this study the pain threshold that the participants will report after 30 minutes of the migraine is the response variable. This is a quantitative variable as they will report a numerical answer.
+
+Explanatory variable - In the study the explanatory variable will be which one of the four pain relief medication taken by the participants. The factor will be pain relief medication with the levels and treatments being each of the four pain medications taken. This is a qualitative variable as there are 4 categorical choices for pain medication.
+
+This study is experimental as control was involved. There are 40 participants with 4 groups of 10 being assigned to a specific pain medication. This control makes this an experiemtnal study and not observational. 
+
+\newpage
+
+#2
+
+```{r}
+
+#data
+Treatment1 <- c(8, 7, 7, 2, 4, 7, 4, 5, 3, 4)
+Treatment2 <- c(7, 10, 6, 6, 5, 8, 5, 8, 7, 4)
+Treatment3 <- c(2, 7, 5, 7, 8, 4, 6, 7, 9, 8)
+Treatment4 <- c(6, 4, 2, 1, 4, 3, 5, 2, 5, 5)
+
+treatments<- c("Treatment1", "Treatmen2", "Treatmen3", "Treatmen4")
+boxplot(Treatment1, Treatment2,Treatment3,Treatment4, names=treatments,  main = "Pain Reports Boxplot", 
+xlab="Method of pain medication", ylab="pain reporting")
+
+```
+
+From the boxplots we see that the pain medication 1 and 4 have roughly equal means at slightly above 4. We can also see that the pain medications 3 and 4 have noticeably higher means (about 6-7) with treatment 3 having a slightly higher mean compared to the pain medication 2.
+
+\newpage
+
+# 3
+
+## overall mean
+
+```{r}
+overallmean <- (sum(Treatment1)+sum(Treatment2)+sum(Treatment3)+sum(Treatment4))/40
+overallmean
+```
+
+##per level
+
+## medication 1
+
+```{r}
+meant1 <- mean(Treatment1)
+meant1
+
+vatt1 <- var(Treatment1)
+vatt1
+```
+
+## medication 2
+
+```{r}
+meant2 <- mean(Treatment2)
+meant2
+
+vatt2 <- var(Treatment2)
+vatt2
+```
+
+## medication 3
+
+```{r}
+meant3 <- mean(Treatment3)
+meant3
+
+vatt3 <- var(Treatment3)
+vatt3
+```
+
+
+## medication 4
+
+```{r}
+meant4 <- mean(Treatment4)
+meant4
+
+vatt4 <- var(Treatment4)
+vatt4
+
+```
+
+\newpage
+
+# q5
+
+```{r}
+
+y <- c(8, 7, 7, 2, 4, 7, 4, 5, 3, 4, 7, 10, 6, 6, 5, 8, 5, 8, 7, 4, 2, 7, 5, 7, 8, 4, 6, 7, 9, 8, 6, 4, 2, 1, 4, 3, 5, 2, 5, 5)
+a <- factor(rep(c("a1", "a2", "a3", "a4"), each=10))
+dat <- data.frame(x=a, y=y)
+
+model <- lm (y ~ a , data = dat)
+anova (model)
+```
+
+The p value is 0.006217 which is lower than 0.05 and hence we reject the null hypothesis and conclude that pain medication appears to have an affect on the migraines.  
+
+\newpage
+
+# q6
+
+Check variance equality with bartlett.test
+
+```{r}
+bartlett.test(y ~ a, data=dat)
+
+```
+
+After using bartlett.test the p value is 0.8732 which is much greater than 0.05  we can conclude that the data follows the ANOVA assumption of equal variance.
+
+Checking normality
+
+```{r}
+print("Treeatment 1")
+qqnorm(Treatment1)
+qqline(Treatment1)
+print("Treeatment 2")
+qqnorm(Treatment2)
+qqline(Treatment2)
+print("Treeatment 3")
+qqnorm(Treatment3)
+qqline(Treatment3)
+print("Treeatment 4")
+qqnorm(Treatment4)
+qqline(Treatment4)
+
+
+
+```
+
+USing qq plots for all 4 treatments levels of pain medications we see that all the data four all treatment levels follows normality. Thus We can conclude that the normality assumption was is followed.
+
+\newpage
+
+
+# q8
+
+```{r}
+fit <- lm ( y  ~ a - 1 , data = dat)
+
+L1 <- matrix(c(
+  1,-1/3,-1/3,-1/3,
+  0, 1, -1/2, -1/2,
+  0, 0, 1, -1), byrow = T, nrow=3)
+
+summary(glht(fit,L1), test=adjusted("none"))
+
+SS.Psi1 = 10*(-0.4333) ^ 2/ sum((L1[1,]) ^ 2)
+SS.Psi2 = 10*(1.6000) ^ 2/ sum((L1[2,]) ^ 2)
+SS.Psi3 = 10*(2.6000) ^ 2/ sum((L1[3,]) ^ 2)
+
+SS.Psi1
+SS.Psi2
+SS.Psi3
+
+
+SS.Psi.treatment <- SS.Psi1 + SS.Psi2 + SS.Psi3
+
+SS.Psi.treatment
+```
+
+\newpage
+
+# q9
+
+H0 : psi_1 = 0 vs H1 : psi_1 = 0
+
+```{r}
+fit <- lm ( y  ~ a - 1 , data = dat)
+
+L1 <- matrix(c(
+  1,-1/3,-1/3,-1/3,
+  0, 1, -1/2, -1/2,
+  0, 0, 1, -1), byrow = T, nrow=3)
+
+
+summary(glht(fit,L1), test=adjusted("none"))
+
+```
+
+since for psi_1 the p value was 0.53546 which is higher than 0.05 we do not reject the null hypothesis. 
+
+\newpage
+
+# q10
+
+
+```{r}
+df <- 40 - 4
+tableT <- qt( 1-(0.05/2), df)
+
+psi1_hat <- -0.4333
+
+sd <- sqrt(3.5972 * ((1^2 +(-1/3)^2+(-1/3)^2+(-1/3)^2)/10)) #mse found from ANOVA table above
+
+CI <- c(psi1_hat-tableT*sd,psi1_hat+tableT*sd )
+
+CI
+
+```
+
+
+
+\newpage
+
+# q11
+
+
+```{r}
+L2 <- matrix(c(
++ 1 , -1/3, -1/3, -1/3,
+ 0 , 1 , -1/2 , -1/2) , byrow=T, nrow=2)
+
+
+summary(glht(fit,L2), test=adjusted("bonferroni"))
+
+```
+
+As we can see, the p value of psi1 is greater than 0.05 and so the null hypothesis (H_0: psi1=0) is not rejected and that the p value for psi2 is also greater than 0.05 and so the null hypothesis (H_0: psi2=0) is not rejected.
+
+\newpage
+
+# q12
+
+```{r}
+
+tukeyCIs = TukeyHSD(aov(lm( y ~ x, data=dat )) , factor=a , conf.level = 0.95)
+tukeyCIs
+```
+
+In this, a p value of less than 0.05 indicates a difference in pairs of treatments, from the table above we see the pain medication groups 4 and 2 and groups 4 and 3 are significantly different. 
